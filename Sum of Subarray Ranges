@@ -1,0 +1,80 @@
+class Solution {
+public:
+    long long subArrayRanges(vector<int>& arr) {
+
+        int n = arr.size();
+        vector<int> ple(n), nle(n);  // Previous Less Element and Next Less Element
+        vector<int> pme(n), nme(n);  // Previous max Element and Next max Element
+        stack<int> st;
+
+        // Find Previous Less Element (PLE)
+        for (int i = 0; i < n; ++i) {
+            while (!st.empty() && arr[st.top()] >= arr[i]) {
+                st.pop();
+            }
+            ple[i] = st.empty() ? -1 : st.top();
+            st.push(i);
+        }
+
+        // Clear the stack for the next use
+        while (!st.empty()) {
+            st.pop();
+        }
+
+        // Find Next Less Element (NLE)
+        for (int i = n - 1; i >= 0; --i) {
+            while (!st.empty() && arr[st.top()] > arr[i]) {
+                st.pop();
+            }
+            nle[i] = st.empty() ? n : st.top();
+            st.push(i);
+        }
+
+        // Clear the stack for the next use
+        while (!st.empty()) {
+            st.pop();
+        }
+
+        // Find Previous max Element (PME)
+        for (int i = 0; i < n; ++i) {
+            while (!st.empty() && arr[st.top()] <= arr[i]) {
+                st.pop();
+            }
+            pme[i] = st.empty() ? -1 : st.top();
+            st.push(i);
+        }
+
+        // Clear the stack for the next use
+        while (!st.empty()) {
+            st.pop();
+        }
+
+
+        // Find Next max Element (NME)
+        for (int i = n - 1; i >= 0; --i) {
+            while (!st.empty() && arr[st.top()] < arr[i]) {
+                st.pop();
+            }
+            nme[i] = st.empty() ? n : st.top();
+            st.push(i);
+        }
+
+        long long sumMin = 0, sumMax = 0;
+        for(int i=0;i<n;i++)
+        {
+            long long  left = i - ple[i];
+            long long  right = nle[i]-i;
+
+            sumMin = (sumMin + (long long)arr[i] * left * right);
+
+            left = i - pme[i];
+            right = nme[i] - i;
+
+            sumMax = (sumMax + (long long)arr[i] * left * right);
+        }
+
+        long long ans = sumMax-sumMin;
+        return ans;
+ 
+    }
+};
