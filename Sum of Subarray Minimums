@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int sumSubarrayMins(vector<int>& arr) {
+        int n = arr.size();
+        int mod = 1e9 + 7;
+        vector<int> ple(n), nle(n);  // Previous Less Element and Next Less Element
+        stack<int> st;
+
+        // Find Previous Less Element (PLE)
+        for (int i = 0; i < n; ++i) {
+            while (!st.empty() && arr[st.top()] >= arr[i]) {
+                st.pop();
+            }
+            ple[i] = st.empty() ? -1 : st.top();
+            st.push(i);
+        }
+
+        // Clear the stack for the next use
+        while (!st.empty()) {
+            st.pop();
+        }
+
+        // Find Next Less Element (NLE)
+        for (int i = n - 1; i >= 0; --i) {
+            while (!st.empty() && arr[st.top()] > arr[i]) {
+                st.pop();
+            }
+            nle[i] = st.empty() ? n : st.top();
+            st.push(i);
+        }
+
+        // Calculate the sum of subarray minimums
+        long long result = 0;
+        for (int i = 0; i < n; ++i) {
+            int left = i - ple[i];          ///  left <- arr[i] -> right   if you mutilple right & left then it gives you how many subarray it can give which will included arr[i] ///
+            int right = nle[i] - i;
+            result = (result + (long long)arr[i] * left * right) % mod;
+        }
+
+        return result;
+    }
+};
