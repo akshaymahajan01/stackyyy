@@ -1,0 +1,44 @@
+class Solution {
+public:
+    string removeKdigits(string num, int k) {
+
+        int n = num.size();
+        stack<char> st;
+
+        for (auto c : num) {
+            while (!st.empty() && st.top() > c && k > 0) {
+                st.pop(); /// remove larger digits before smaller digits ///
+                k--;
+            }
+            st.push(c);
+        }
+
+        while (k > 0) {
+            st.pop(); /// remove last k digits //
+            k--;
+        }
+
+        string ans = "";
+        while (!st.empty()) {
+            ans += st.top(); /// formation as a string ///
+            st.pop();
+        }
+
+        int endingIndex = 0;
+
+        for (int i = ans.size() - 1; i >= 0; i--) {
+            if (ans[i] != '0') {
+                endingIndex = i; /// this is we are doing because we may have
+                                 /// zeroa in the front in result //
+                break;
+            }
+        }
+
+        ans = ans.substr(0, endingIndex + 1);
+        reverse(ans.begin(), ans.end());
+        if (ans == "")
+            return "0";
+
+        return ans;
+    }
+};
